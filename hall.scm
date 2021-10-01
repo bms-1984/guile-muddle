@@ -1,7 +1,7 @@
 (hall-description
   (name "muddle")
   (prefix "guile")
-  (version "0.1.0")
+  (version "0.2.0")
   (author "Ben M. Sutter")
   (copyright (2021))
   (synopsis "MUD Server")
