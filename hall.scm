@@ -6,7 +6,7 @@
   (copyright (2021))
   (synopsis "MUD Server")
   (description "Lispy MUD Server")
-  (home-page "")
+  (home-page "https://github.com/bms-1984/guile-muddle")
   (license gpl3+)
   (dependencies `())
   (files (libraries
@@ -14,7 +14,6 @@
             (directory
               "muddle"
               ((scheme-file "players")
-               (scheme-file "user")
                (scheme-file "server")
                (scheme-file "repl")))))
          (tests ((directory "tests" ())))
