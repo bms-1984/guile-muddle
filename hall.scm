@@ -18,7 +18,8 @@
                (scheme-file "server")
                (scheme-file "repl")))))
          (tests ((directory "tests" ())))
-         (programs ((directory "scripts" ())))
+         (programs
+           ((directory "scripts" ((scheme-file "muddle")))))
          (documentation
            ((org-file "README")
             (symlink "README" "README.org")

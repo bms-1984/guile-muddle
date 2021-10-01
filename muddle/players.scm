@@ -1,35 +1,40 @@
 (define-module (muddle players)
   #:use-module (srfi srfi-1)
   #:export (make-player
+	    make-password
+	    players
 	    player?
 	    age
 	    gender
 	    password=?))
 
-(define playerlist (if (access? "./playerlist.scm" (logior R_OK W_OK))
-		       (call-with-input-file "./playerlist.scm" read)
-		       (begin (call-with-output-file "./playerlist.scm" (lambda (port)
+(define playerlist-file "./playerlist.scm")
+
+(define playerlist (if (access? playerlist-file (logior R_OK W_OK))
+		       (call-with-input-file playerlist-file read)
+		       (begin (call-with-output-file playerlist-file (lambda (port)
 								       (write '() port)))
 			      '())))
 
+(define (players) playerlist)
+
 (define (write-playerlist)
-  (if (access? "./playerlist.scm" W_OK)
-      (call-with-output-file "./playerlist.scm" (lambda (port)
+  (if (access? playerlist-file W_OK)
+      (call-with-output-file playerlist-file (lambda (port)
 						  (write playerlist port)))))
 
-(define* (make-player name password #:key (age 18) (gender 'non-binary))
-  (set! playerlist (append playerlist (list (list name password age gender))))
+(define (make-player name password)
+  (set! playerlist (append playerlist (list (list name password))))
   (write-playerlist))
 
 (define (player? name) (find (lambda (x) (string=? (car x) name)) playerlist))
 
-(define (age name) (third (player? name)))
+(define (make-password pass)
+  (crypt pass (salt)))
 
-(define (gender name) (fourth (player? name)))
-
-(define (password=? name)
+(define (password=? name pass)
   (when (player? name) 
-    (if (string=? (crypt (getpass "Password:") (second (player? name))) (second (player? name)))
+    (if (string=? (crypt pass (second (player? name))) (second (player? name)))
 	#t
 	#f)))
 
