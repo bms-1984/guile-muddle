@@ -39,5 +39,4 @@
 	(format #t "Client address: ~S" (gethostbyaddr
 						(sockaddr:addr client-details)))
 	(newline)
-	(mudl client)
-	(close client)))))
+	(begin-thread (mudl client))))))

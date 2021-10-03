@@ -25,25 +25,33 @@
   (while #t 
     (display "Username: " port)
     (let ((name (string-filter char-alphabetic? (read-line port))))
-      (if (player? name)
-	  (begin
+      (if (player? name) 
+	  (begin ; player exists
 	    (display "That name already exists. Is it you? " port)
 	    (if (string-ci=? (string-filter char-alphabetic? (read-line port)) "yes")
-		(begin
+		(begin ; user claims to be player
 		  (display "Password: " port)
 		  (if (password=? name (string-delete char-whitespace? (read-line port)))
-		      (begin 
+		      (begin ; user is player
 			(set! user name)
 			(break))
-		      (begin
+		      (begin ; user is not player
 			(display "Incorrect password." port)
 			(newline port)
 			(continue))))
 		(continue)))
-	  (begin
+	  (begin ; creating a new player
 	    (display "Password: " port)
 	    (make-player name (make-password (string-delete char-whitespace? (read-line port))))
 	    (set! user name)
 	    (break)))))
   (format port "Welcome ~A!" user)
-  (newline port))
+  (newline port)
+  (user-loop user port)
+  (close port))
+
+(define (user-loop user port)
+  (while #t
+    (format port "~A > " user)
+    (let ((line (string-delete (char-set #\return #\newline #\linefeed) (read-line port))))
+      (cond ((string-contains-ci line "quit") (break))))))
