@@ -20,29 +20,31 @@
   #:export (make-player
 	    make-password
 	    players
+	    playerfile-path
 	    player?
 	    age
 	    gender
 	    password=?))
 
-(define playerlist-file "./playerlist.scm")
+(define playerfile "./Playerfile")
 
-(define playerlist (if (access? playerlist-file (logior R_OK W_OK))
-		       (call-with-input-file playerlist-file read)
-		       (begin (call-with-output-file playerlist-file (lambda (port)
+(define playerlist (if (access? playerfile (logior R_OK W_OK))
+		       (call-with-input-file playerfile read)
+		       (begin (call-with-output-file playerfile (lambda (port)
 								       (write '() port)))
 			      '())))
 
+(define (playerfile-path) (canonicalize-path playerfile))
 (define (players) playerlist)
 
-(define (write-playerlist)
-  (if (access? playerlist-file W_OK)
-      (call-with-output-file playerlist-file (lambda (port)
+(define (write-playerfile)
+  (if (access? playerfile W_OK)
+      (call-with-output-file playerfile (lambda (port)
 						  (write playerlist port)))))
 
 (define (make-player name password)
   (set! playerlist (append playerlist (list (list name password))))
-  (write-playerlist))
+  (write-playerfile))
 
 (define (player? name) (find (lambda (x) (string=? (car x) name)) playerlist))
 
