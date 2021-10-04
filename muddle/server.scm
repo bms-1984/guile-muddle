@@ -17,18 +17,26 @@
 
 (define-module (muddle server)
   #:use-module (muddle repl)
+  #:use-module (srfi srfi-1)
   #:use-module (ice-9 threads)
-  #:export (run-server))
+  #:export (run-server
+	    clients
+	    client?))
+
+(define clientlist '())
+
+(define (clients) clientlist)
+
+(define (client? port)
+  (find (lambda (x) (equal? port (car x))) clientlist))
 
 (define* (run-server #:key (port 4000))
   (let ((s (socket PF_INET SOCK_STREAM 0)))
     (setsockopt s SOL_SOCKET SO_REUSEADDR 1)
     (bind s AF_INET INADDR_ANY port)
-    (listen s 5)
-    
+    (listen s 5)    
     (format #t "Listening on port ~S." port)
     (newline)
-    
     (while #t
       (let* ((client-connection (accept s))
 	     (client-details (cdr client-connection))
@@ -37,6 +45,7 @@
 	(format #t "Accepted connection: ~S" client-details)
 	(newline)
 	(format #t "Client address: ~S" (gethostbyaddr
-						(sockaddr:addr client-details)))
+					 (sockaddr:addr client-details)))
 	(newline)
+	(set! clientlist (append clientlist `(,client-connection)))
 	(begin-thread (mudl client))))))

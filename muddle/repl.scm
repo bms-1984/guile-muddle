@@ -18,6 +18,7 @@
 (define-module (muddle repl)
   #:use-module (ice-9 rdelim)
   #:use-module (muddle players)
+  #:use-module (muddle server)
   #:export (mudl))
 
 (define (mudl port)

@@ -43,7 +43,7 @@
 						  (write playerlist port)))))
 
 (define (make-player name password)
-  (set! playerlist (append playerlist (list (list name password))))
+  (set! playerlist (append playerlist `(,`(,name ,password))))
   (write-playerfile))
 
 (define (player? name) (find (lambda (x) (string=? (car x) name)) playerlist))
@@ -52,10 +52,8 @@
   (crypt pass (salt)))
 
 (define (password=? name pass)
-  (when (player? name) 
-    (if (string=? (crypt pass (second (player? name))) (second (player? name)))
-	#t
-	#f)))
+  (when (player? name)  
+    (string=? (crypt pass (second (player? name))) (second (player? name)))))
 
 (define* (salt #:optional ending)
   (let* ((charset "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
