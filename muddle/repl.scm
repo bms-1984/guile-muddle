@@ -21,38 +21,42 @@
   #:use-module (muddle server)
   #:export (mudl))
 
-(define (mudl port)
+(define (mudl)
+  (set-current-output-port (current-input-port))
   (define user #f)
-  (while #t 
-    (display "Username: " port)
-    (let ((name (string-filter char-alphabetic? (read-line port))))
-      (if (player? name) 
+  (while #t
+    (display "Username: ")
+    (let ((name (read-line*)))
+      (if (player? name)
 	  (begin ; player exists
-	    (display "That name already exists. Is it you? " port)
-	    (if (string-ci=? (string-filter char-alphabetic? (read-line port)) "yes")
+	    (display "That name already exists. Is it you? ")
+	    (if (string-ci=? (read-line*) "yes")
 		(begin ; user claims to be player
-		  (display "Password: " port)
-		  (if (password=? name (string-delete char-whitespace? (read-line port)))
+		  (display "Password: ")
+		  (if (password=? name (read-line*))
 		      (begin ; user is player
 			(set! user name)
 			(break))
 		      (begin ; user is not player
-			(display "Incorrect password." port)
-			(newline port)
+			(display "Incorrect password.")
+			(newline)
 			(continue))))
 		(continue)))
 	  (begin ; creating a new player
-	    (display "Password: " port)
-	    (make-player name (make-password (string-delete char-whitespace? (read-line port))))
+	    (display "Password: ")
+	    (make-player name (make-password (read-line*)))
 	    (set! user name)
 	    (break)))))
-  (format port "Welcome ~A!" user)
-  (newline port)
-  (user-loop user port)
-  (close port))
+  (format #t "Welcome ~A!" user)
+  (newline)
+  (user-loop user)
+  (close (current-input-port)))
 
-(define (user-loop user port)
+(define (read-line*)
+  (string-delete (char-set #\return #\newline #\linefeed) (read-line)))
+
+(define (user-loop user)
   (while #t
-    (format port "~A > " user)
-    (let ((line (string-delete (char-set #\return #\newline #\linefeed) (read-line port))))
+    (format #t "~A > " user)
+    (let ((line (read-line*)))
       (cond ((string-contains-ci line "quit") (break))))))

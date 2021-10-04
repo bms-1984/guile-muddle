@@ -1,5 +1,5 @@
 #!/usr/bin/env guile -s
 !#
 
-(use-modules (muddle server))
+(use-modules (muddle))
 (run-server)

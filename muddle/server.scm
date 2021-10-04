@@ -27,8 +27,7 @@
 
 (define (clients) clientlist)
 
-(define (client? port)
-  (find (lambda (x) (equal? port (car x))) clientlist))
+(define (client? port) (find (lambda (x) (equal? (car x) port)) clientlist))
 
 (define* (run-server #:key (port 4000))
   (let ((s (socket PF_INET SOCK_STREAM 0)))
@@ -40,12 +39,11 @@
     (while #t
       (let* ((client-connection (accept s))
 	     (client-details (cdr client-connection))
-	     (client (car client-connection))
-	     )
+	     (client (car client-connection)))
 	(format #t "Accepted connection: ~S" client-details)
 	(newline)
 	(format #t "Client address: ~S" (gethostbyaddr
 					 (sockaddr:addr client-details)))
 	(newline)
 	(set! clientlist (append clientlist `(,client-connection)))
-	(begin-thread (mudl client))))))
+	(begin-thread (with-input-from-port client mudl))))))

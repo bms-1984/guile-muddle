@@ -16,6 +16,6 @@
 ;; along with Muddle.  If not, see <https://www.gnu.org/licenses/>.
 
 (define-module (muddle)
-  #:use-module (muddle players)
-  #:use-module (muddle server))
+  #:use-module (muddle server)
+  #:re-export (run-server))
 

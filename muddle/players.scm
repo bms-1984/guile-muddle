@@ -22,25 +22,23 @@
 	    players
 	    playerfile-path
 	    player?
-	    age
-	    gender
 	    password=?))
 
-(define playerfile "./Playerfile")
+(define-once playerfile "./Playerfile")
 
-(define playerlist (if (access? playerfile (logior R_OK W_OK))
+(define-once playerlist (if (access? playerfile (logior R_OK W_OK))
 		       (call-with-input-file playerfile read)
-		       (begin (call-with-output-file playerfile (lambda (port)
-								       (write '() port)))
-			      '())))
+		       (begin
+			 (call-with-output-file playerfile 
+			   (lambda (port) (write '() port))) '())))
 
 (define (playerfile-path) (canonicalize-path playerfile))
 (define (players) playerlist)
 
 (define (write-playerfile)
   (if (access? playerfile W_OK)
-      (call-with-output-file playerfile (lambda (port)
-						  (write playerlist port)))))
+      (call-with-output-file playerfile
+	(lambda (port) (write playerlist port)))))
 
 (define (make-player name password)
   (set! playerlist (append playerlist `(,`(,name ,password))))
