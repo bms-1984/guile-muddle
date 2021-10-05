@@ -24,7 +24,7 @@
 	    player?
 	    password=?))
 
-(define-once playerfile "./Playerfile")
+(define-once playerfile "Playerfile")
 
 (define-once playerlist (if (access? playerfile (logior R_OK W_OK))
 		       (call-with-input-file playerfile read)
