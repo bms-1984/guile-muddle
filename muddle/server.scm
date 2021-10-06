@@ -18,7 +18,7 @@
 (define-module (muddle server)
   #:use-module (muddle repl)
   #:use-module (srfi srfi-1)
-  #:use-module (ice-9 threads)
+  #:use-module (srfi srfi-18)
   #:export (run-server
 	    clients
 	    client?))
@@ -46,4 +46,5 @@
 					 (sockaddr:addr client-details)))
 	(newline)
 	(set! clientlist (append clientlist `(,client-connection)))
-	(begin-thread (with-input-from-port client mudl))))))
+        (make-thread (lambda ()
+			  (with-input-from-port client mudl)) (sockaddr:addr client-details))))))
